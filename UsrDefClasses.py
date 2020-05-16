@@ -1,111 +1,234 @@
 import json
 from threading import Lock
-import constants as C
+import constants as c
+import os
 
-#------------------------------------------------
+# ------------------------------------------------
+# NAS Class
+# ------------------------------------------------
+
+
+class Nas:
+    aNasServers = []
+
+    # Reading NAS servers from initialisation.json file
+    def mount_nas_servers(self):
+        init_file_text = open(c.INITFILEPATH, 'r').read()
+        init_file_json = json.loads(init_file_text)
+        self.aNasServers = init_file_json[c.JSONKEYNASSERVERS]
+        for nasServer in self.aNasServers:
+            print(__name__, "-> mounting NAS-server: ", nasServer[c.JSONKEYTITLE])
+            cmd_line = c.NASSERVERSPATH + nasServer[c.JSONKEYTITLE] + "/"
+
+            if not os.path.exists(cmd_line):
+                print(__name__, " -> directory ", nasServer[c.JSONKEYTITLE], " does not exists, creating directory.")
+                cmd_line = "sudo mkdir " + c.NASSERVERSPATH + nasServer[c.JSONKEYTITLE]
+                os.system(cmd_line)
+            cmd_line = "sudo mount -t cifs //" + nasServer[c.JSONKEYIP] \
+                       + "/" + nasServer[c.JSONKEYDIRECTORY] \
+                       + " -o username=" + nasServer[c.JSONKEYUSERNAME] \
+                       + ",password=" + nasServer[c.JSONKEYPASSWORD] \
+                       + " " + c.NASSERVERSPATH + nasServer[c.JSONKEYTITLE]
+            os.system(cmd_line)
+
+    # Retrieving Directory Contents
+    def get_files_from_directory(self, start, length, path):
+
+        class CDirectoryList:
+            list = []
+            maxLength = 0
+
+        start = start - 1
+        tmp = list()
+        tmp.clear()
+        result = CDirectoryList()
+        if start >= 0 and length > 1:
+            counter = 0
+
+        # Make sure path is allowed
+        if path[:len(c.NASSERVERSPATH)] != c.NASSERVERSPATH:
+            print(__name__, " -> source path: ", path[:len(c.NASSERVERSPATH)], 
+                  "is not allowed, set path to: ", c.NASSERVERSPATH)
+            path = c.NASSERVERSPATH
+
+        with os.scandir(path) as items:
+            for item in items:
+                if not item.name.startswith('.'):
+                    if len(item.name) >= 4 and \
+                       (item.is_file() and
+                       item.name[-4:] in c.AUDIOFILES) or \
+                       item.is_dir():
+                        counter = counter + 1
+                        dir_item = dict()
+                        dir_item[c.JSONKEYTITLE] = item.name
+                        dir_item[c.JSONKEYDIRECTORY] = str(item.is_dir())
+                        dir_item[c.JSONKEYLINK] = item.path
+                        tmp.append(dir_item)
+        items.close()
+
+        # sort on alphabetic order (CAPS independent) + folders
+        mod = True
+        while mod:
+            mod = False
+            for i in range(len(tmp) - 1):
+                if tmp[i + 1]["title"].upper() < tmp[i]["title"].upper() or \
+                   (tmp[i + 1]["directory"] == "True" and tmp[i]["directory"] == "False"):
+                    tmp3 = tmp[i]
+                    tmp[i] = tmp[i + 1]
+                    tmp[i + 1] = tmp3
+                    mod = True
+
+        # retrieve selection
+        tmp2 = {}
+        if start <= len(tmp):
+            if start + length >= len(tmp):
+                length = len(tmp) - start
+            tmp2 = tmp[start: start + length]
+
+        result.list = tmp2
+        result.maxLength = str(len(tmp))
+        return str(json.dumps(result.__dict__))
+
+# ------------------------------------------------
+# Media Control Class
+# ------------------------------------------------
+
+
+class MediaControls:
+    StateMachineGo = True
+    cmdState = "stop"
+    urlState = c.DEFAULTAUDIOFILE
+    cmdReq = "stop"
+    urlReq = c.DEFAULTAUDIOFILE
+    mPlayer = None
+    MediaLock = Lock()
+
+    def return_media_feedback(self):
+        return {c.JSONKEYCMDSTATEFB: self.cmdState,
+                c.JSONKEYURLSTATEFB: self.urlState}
+
+    def update_media_controls(self, sid, message):
+        self.MediaLock.acquire()
+        if message.get('TerminateMedia'):
+            print(__name__, " -> Terminating Media Thread: ", str(sid))
+            self.StateMachineGo = False
+
+        if message.get('cmd') == 'stop' or message.get('cmd') == 'play':
+            print(__name__, " -> Media Command received: ", message.get('cmd'))
+            self.cmdReq = message.get('cmd')
+
+        if message.get('url') is not None:
+            print(__name__, " -> Media URL received: ", message.get('url'))
+            self.urlReq = message.get('url')
+
+        self.MediaLock.release()
+
+# ------------------------------------------------
 # Audio Control Class
-#------------------------------------------------
+# ------------------------------------------------
+
 
 class AudioControls:
-   StateMachineGo = True
-   Volume = 0
-   Bass = 0
-   Middle = 0
-   Trebble = 0
-   Select = 1
-   PreSelect = 2
-   ControlLock = Lock()
+    StateMachineGo = True
+    Volume = 0
+    Bass = 0
+    Middle = 0
+    Trebble = 0
+    Select = 1
+    PreSelect = 2
+    ControlLock = Lock()
 
-   def IsBiDiAudioCtrl(self, message):
-      return message.get( C.JSONKEYBASSCTRL ) or message.get( C.JSONKEYMIDDLECTRL ) or message.get( C.JSONKEYTREBBLECTRL )
+    def is_bi_di_audio_ctrl(self, message):
+        return message.get(c.JSONKEYBASSCTRL) or message.get(c.JSONKEYMIDDLECTRL) or message.get(c.JSONKEYTREBBLECTRL)
 
-   def ChangeBiDiAudioCtrl(self, Value, DeltaValue):
-      Value = Value + DeltaValue
-      if Value > 100:
-         Value = 100
-      if Value < -100:
-         Value = -100
-      return Value
+    def change_bi_di_audio_ctrl(self, value, deltavalue):
+        value = value + deltavalue
+        if value > 100:
+            value = 100
+        if value < -100:
+            value = -100
+        return value
 
-   def IsUniAudioCtrl(self, message):
-      return message.get( C.JSONKEYVOLUMECTRL )
+    def is_uni_audio_ctrl(self, message):
+        return message.get(c.JSONKEYVOLUMECTRL)
 
-   def ChangeUniAudioCtrl(self, Value, DeltaValue):
-      Value = Value + DeltaValue
-      if Value > 100:
-         Value = 100
-      if Value < 0:
-         Value = 0
-      return Value
+    def change_uni_audio_ctrl(self, value, deltavalue):
+        value = value + deltavalue
+        if value > 100:
+            value = 100
+        if value < 0:
+            value = 0
+        return value
 
-   def IsAudioInputCtrl(self, message):
-      return message.get( C.JSONKEYSELECTCTRL )
+    def is_audio_input_ctrl(self, message):
+        return message.get(c.JSONKEYSELECTCTRL)
 
-   def ChangeAudioInputCtrl(self, Value):
-      if Value > 100:
-         Value = 100
-      if Value < 0:
-         Value = 0
-      return Value
+    def change_audio_input_ctrl(self, value):
+        if value > 100:
+            value = 100
+        if value < 0:
+            value = 0
+        return value
 
-   def ReturnPreampFeedback(self):
-      return { C.JSONKEYVOLUMEFB: self.Volume,
-                C.JSONKEYBASSFB: self.Bass,
-                 C.JSONKEYMIDDLEFB: self.Middle,
-                  C.JSONKEYTREBBLEFB: self.Trebble,
-                   C.JSONKEYSELECTFB: self.Select}
+    def return_preamp_feedback(self):
+        return {c.JSONKEYVOLUMEFB: self.Volume,
+                c.JSONKEYBASSFB: self.Bass,
+                c.JSONKEYMIDDLEFB: self.Middle,
+                c.JSONKEYTREBBLEFB: self.Trebble,
+                c.JSONKEYSELECTFB: self.Select}
 
-   def UpdatePreampControls(self, sid, message):
-      self.ControlLock.acquire()
-      if message.get( 'TerminateAudio' ):
-         print(__name__, " -> Terminating Audio Thread")
-         self.StateMachineGo = False
-      if self.IsUniAudioCtrl( message ):
-         if message.get( C.JSONKEYVOLUMECTRL ):
-            self.Volume = self.ChangeUniAudioCtrl(self.Volume , message[ C.JSONKEYVOLUMECTRL ])
-      if self.IsBiDiAudioCtrl( message ):
-         if message.get( C.JSONKEYBASSCTRL ):
-            self.Bass = self.ChangeBiDiAudioCtrl(self.Bass , message[ C.JSONKEYBASSCTRL ])
-         if message.get( C.JSONKEYMIDDLECTRL ):
-            self.Middle = self.ChangeBiDiAudioCtrl(self.Middle , message[ C.JSONKEYMIDDLECTRL ])
-         if message.get( C.JSONKEYTREBBLECTRL ):
-            self.Trebble = self.ChangeBiDiAudioCtrl(self.Trebble , message[ C.JSONKEYTREBBLECTRL ])
-      if self.IsAudioInputCtrl( message ):
-         self.Select = self.ChangeAudioInputCtrl(message[ C.JSONKEYSELECTCTRL ] )
-      self.ControlLock.release()
+    def update_preamp_controls(self, sid, message):
+        self.ControlLock.acquire()
+        if message.get('TerminateAudio'):
+            print(__name__, " -> Terminating Audio Thread:", str(sid))
+            self.StateMachineGo = False
+        if self.is_uni_audio_ctrl(message):
+            if message.get(c.JSONKEYVOLUMECTRL):
+                self.Volume = self.change_uni_audio_ctrl(self.Volume, message[c.JSONKEYVOLUMECTRL])
+        if self.is_bi_di_audio_ctrl(message):
+            if message.get(c.JSONKEYBASSCTRL):
+                self.Bass = self.change_bi_di_audio_ctrl(self.Bass, message[c.JSONKEYBASSCTRL])
+            if message.get(c.JSONKEYMIDDLECTRL):
+                self.Middle = self.change_bi_di_audio_ctrl(self.Middle, message[c.JSONKEYMIDDLECTRL])
+            if message.get(c.JSONKEYTREBBLECTRL):
+                self.Trebble = self.change_bi_di_audio_ctrl(self.Trebble, message[c.JSONKEYTREBBLECTRL])
+        if self.is_audio_input_ctrl(message):
+            self.Select = self.change_audio_input_ctrl(message[c.JSONKEYSELECTCTRL])
+        self.ControlLock.release()
 
-#------------------------------------------------
+# ------------------------------------------------
 # Power Control Class
-#------------------------------------------------
+# ------------------------------------------------
+
 
 class PowerControls:
-   StateMachineGo = True
-   FrontDoor = 0
-   PreampPower = 0
-   LineOutput = 0
-   PowerLock = Lock()
+    StateMachineGo = True
+    FrontDoor = 0
+    PreampPower = 0
+    LineOutput = 0
+    PowerLock = Lock()
 
-   def ChangePowerCtrl(self, Value):
-             if Value >= 1:
-                Value = 1
-             else:
-                Value = 0
-             return Value
+    def change_power_ctrl(self, value):
+        if value >= 1:
+            value = 1
+        else:
+            value = 0
+        return value
 
-   def ReturnPowerFeedback(self):
-      return { C.JSONKEYFRONTDOORFB: self.FrontDoor,
-                C.JSONKEYPREAMPPOWERFB: self.PreampPower,
-                 C.JSONKEYLINEOUTPUTFB: self.LineOutput}
+    def return_power_feedback(self):
+        return {c.JSONKEYFRONTDOORFB: self.FrontDoor,
+                c.JSONKEYPREAMPPOWERFB: self.PreampPower,
+                c.JSONKEYLINEOUTPUTFB: self.LineOutput}
 
-   def UpdatePowerControls(self, sid, message):
-      self.PowerLock.acquire()
-      if message.get( 'TerminatePower' ):
-         print(__name__, " -> Terminating Power Thread")
-         self.StateMachineGo = False
-      if message.get( C.JSONKEYFRONTDOORCTRL ):
-         self.FrontDoor = self.ChangePowerCtrl(message[ C.JSONKEYFRONTDOORCTRL ])
-      if message.get( C.JSONKEYPREAMPPOWERCTRL ):
-         self.PreampPower = self.ChangePowerCtrl(message[ C.JSONKEYPREAMPPOWERCTRL ])
-      if message.get( C.JSONKEYLINEOUTPUTCTRL ):
-         self.LineOutput = self.ChangePowerCtrl(message[ C.JSONKEYLINEOUTPUTCTRL ])
-      self.PowerLock.release()
+    def update_power_controls(self, sid, message):
+        self.PowerLock.acquire()
+        if message.get('TerminatePower'):
+            print(__name__, " -> Terminating Power Thread: ", str(sid))
+            self.StateMachineGo = False
+        if message.get(c.JSONKEYFRONTDOORCTRL):
+            self.FrontDoor = self.change_power_ctrl(message[c.JSONKEYFRONTDOORCTRL])
+        if message.get(c.JSONKEYPREAMPPOWERCTRL):
+            self.PreampPower = self.change_power_ctrl(message[c.JSONKEYPREAMPPOWERCTRL])
+        if message.get(c.JSONKEYLINEOUTPUTCTRL):
+            self.LineOutput = self.change_power_ctrl(message[c.JSONKEYLINEOUTPUTCTRL])
+        self.PowerLock.release()

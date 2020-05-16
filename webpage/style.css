@@ -1,0 +1,469 @@
+body {
+   background-color: black;
+   width: 1080px;
+   height: 1900px;
+   margin: 0px;
+}
+
+#radiochannel {
+   position: absolute;
+   border-style: solid;
+   border-radius: 20px;
+   left: 100px;
+   top: 1050px;
+   width: 880px;
+   height: 90px;
+   background-color: rgba(128, 255, 128, 0.6);
+   color: black;
+   text-align: center;
+   font-size: 70px;
+}
+
+#HeaderPage1 {
+   position: fixed;
+   left: 0px;
+   top: 0px;
+   width: 1080px;
+   height: 150px;
+   color: white;
+   text-align: center;
+   font-size: 140px;
+}
+
+.AudioCtrlHeader {
+   position: absolute;
+   width: 200px;
+   height: 70px;
+   color: white;
+   text-align: center;
+   font-size: 50px;
+   font-weight: bold;
+}
+
+.AudioCtrlFeedBack {
+   position: absolute;
+   width: 200px;
+   height: 70px;
+   color: white;
+   text-align: center;
+   font-size: 50px;
+   font-weight: bold;
+}
+
+.FooterPage {
+   position: fixed;
+   left: 270px;
+   top: 1350px;
+   width: 810px;
+   height: 550px;
+}
+
+.VolumePage {
+   position: fixed;
+   left: 0px;
+   top: 1350px;
+   width: 270px;
+   height: 550px;
+}
+
+#VolumePage0 {
+   display: none;
+}
+
+#FooterPage0 {
+   display: block;
+   left: 0px;
+   width: 1080px;
+}
+
+#FooterPage1 {
+   display: none;
+}
+
+#FooterPage2 {
+   display: none;
+}
+
+#FooterPage3 {
+   display: none;
+}
+
+#FooterPage4 {
+   display: none;
+}
+
+#FooterPage5 {
+   display: none;
+}
+
+.PanelPage {
+   position: fixed;
+   left: 0px;
+   top: 150px;
+   width: 1080px;
+   height: 1200px;
+}
+
+#PanelPage0 {
+   background-image: url('./image338.jpg');
+   display: block;
+}
+
+#PanelPage1 {
+   background-image: url('./image325.jpg');
+   display: none;
+}
+
+#PanelPage2 {
+   background-image: url('./image321.jpg');
+   display: none;
+}
+
+#PanelPage3 {
+   background-image: url('./image463.jpg');
+   display: none;
+}
+
+#PanelPage4 {
+   background-image: url('./image501.jpg');
+   display: none;
+}
+
+#PanelPage5 {
+   background-image: url('./image530.jpg');
+   display: none;
+}
+
+.RelayBtn {
+   position: absolute;
+   width: 200px;
+   height: 200px;
+   background: transparent;
+   border: none;
+   background-repeat:no-repeat;
+   background-size:cover; 
+}
+
+.AudioCtrlBtn{
+   position: absolute;
+   width: 160px;
+   height: 160px;
+   background: transparent;
+   border: none;
+   background-repeat:no-repeat;
+   background-size:cover; 
+}
+
+.SelectBtn{
+   position: absolute;
+   width: 160px;
+   height: 160px;
+   background: transparent;
+   border: none;
+   background-repeat:no-repeat;
+   background-size:cover; 
+}
+
+.HomeBtn{
+   position: absolute;
+   width: 160px;
+   height: 160px;
+   background: transparent;
+   border: none;
+   background-repeat:no-repeat;
+   background-size:cover; 
+}
+
+#AudioFile {
+   width: 980px;
+   height: 90px;
+   color: black;
+   font-size: 50px;
+   background-color: rgba(128, 255, 128, 0.6);
+   border-style: solid;
+   border-radius: 20px;
+   border-color: black;
+   padding-left: 30px;
+   margin-left: 50px;
+   margin-top: 25px;
+}
+
+.FileBtn {
+   width: 980px;
+   height: 90px;
+   color: black;
+   font-size: 50px;
+   background-color: rgba(0, 255, 255, 0.3);
+   border-style: solid;
+   border-radius: 20px;
+   border-color: black;
+   padding-left: 30px;
+   margin-left: 50px;
+   margin-top: 15px;
+}
+
+#AudioCtrlHeaderVolume {
+   left: 56px;
+   top: 0px;
+}
+
+#VolumeUp {
+   background-image: url('./image327.png');
+   left: 76px;
+   top: 60px;
+}   
+
+#VolumeFB {
+   left: 56px;
+   top: 230px;
+} 
+
+#VolumeDown {
+   background-image: url('./image329.png');
+   left: 76px;
+   top: 300px; 
+}
+
+#AudioCtrlHeaderBass {
+   left: 42px;
+   top: 0px;
+}
+
+#BassUp {
+   background-image: url('./image327.png');
+   left: 62px;
+   top: 60px;
+}   
+
+#BassFB {
+   left: 42px;
+   top: 230px;
+}
+
+#BassDown {
+   background-image: url('./image329.png');
+   left: 62px;
+   top: 300px; 
+}
+
+#AudioCtrlHeaderMiddle {
+   left: 278px;
+   top: 0px;
+}
+
+#MiddleUp {
+   background-image: url('./image327.png');
+   left: 298px;
+   top: 60px;
+}   
+
+#MiddleFB {
+   left: 278px;
+   top: 230px;
+}
+
+#MiddleDown {
+   background-image: url('./image329.png');
+   left: 298px;
+   top: 300px; 
+}
+
+#AudioCtrlHeaderTrebble {
+   left: 534px;
+   top: 0px;
+}
+
+#TrebbleUp {
+   background-image: url('./image327.png');
+   left: 554px;
+   top: 60px;
+}   
+
+#TrebbleFB {
+   left: 534px;
+   top: 230px;
+}
+
+#TrebbleDown {
+   background-image: url('./image329.png');
+   left: 554px;
+   top: 300px; 
+}
+
+#Select1 {
+   background-image: url('./image387.png');
+   left: 56px;
+   top: 56px; 
+}
+
+#Select2 {
+   background-image: url('./image389.png');
+   left: 56px;
+   top: 272px; 
+}
+
+#Select3 {
+   background-image: url('./image391.png');
+   left: 56px;
+   top: 488px; 
+}
+
+#Select4 {
+   background-image: url('./image393.png');
+   left: 56px;
+   top: 704px; 
+}
+
+#HomeLink0 {
+   background-image: url('./image423.png');
+   left: 864px;
+   top: 984px;
+}
+
+#HomeLink1 {
+   background-image: url('./image423.png');
+   left: 864px;
+   top: 984px;
+}
+
+#FrontDoorFB {
+   left: 150px;
+   top: 0px;
+}
+
+#FrontDoorUp {
+   background-image: url('./image357.png');
+   left: 150px;
+   top: 70px;
+}
+
+#FrontDoorDown {
+   background-image: url('./image359.png');
+   left: 150px;
+   top: 300px;
+}  
+
+#PreampPowerFB {
+   left: 440px;
+   top: 0px;
+}
+
+#PreampPowerUp {
+   background-image: url('./image293.png');
+   left: 440px;
+   top: 70px;
+}
+
+#PreampPowerDown {
+   background-image: url('./image299.png');
+   left: 440px;
+   top: 300px;
+}
+
+#LineOutputFB {
+   left: 730px;
+   top: 0px;
+}
+
+#LineOutputUp {
+   background-image: url('./image363.png');
+   left: 730px;
+   top: 70px;
+}
+
+#LineOutputDown {
+   background-image: url('./image365.png');
+   left: 730px;
+   top: 300px;
+}
+
+#DirectoryUp2 {
+   background-image: url('./image357.png');
+   left: 62px;
+   top: 60px;
+}
+
+#previous2 {
+   background-image: url('./image342.png');
+   left: 62px;
+   top: 300px;
+}
+
+#play2 {
+   background-image: url('./image360.png');
+   left: 316px;
+   top: 60px;
+}
+
+#stop2 {
+   background-image: url('./image373.png');
+   left: 316px;
+   top: 300px;
+}
+
+#HomeLink2 {
+   background-image: url('./image423.png');
+   left: 574px;
+   top: 60px;
+}
+
+#next2 {
+   background-image: url('./image364.png');
+   left: 574px;
+   top: 300px;
+}
+
+#stop3 {
+   background-image: url('./image373.png');
+   left: 316px;
+   top: 300px;
+}
+
+#HomeLink3 {
+   background-image: url('./image423.png');
+   left: 574px;
+   top: 60px;
+}
+
+#next3 {
+   background-image: url('./image364.png');
+   left: 574px;
+   top: 300px;
+}
+
+#previous3 {
+   background-image: url('./image342.png');
+   left: 62px;
+   top: 300px;
+}
+
+#play3 {
+   background-image: url('./image360.png');
+   left: 316px;
+   top: 60px;
+}
+
+#HomeLink4 {
+   background-image: url('./image423.png');
+   left: 574px;
+   top: 60px;
+}
+
+#play4 {
+   background-image: url('./image360.png');
+   left: 574px;
+   top: 300px;
+}
+
+#HomeLink5 {
+   background-image: url('./image423.png');
+   left: 574px;
+   top: 60px;
+}
+
+#play5 {
+   background-image: url('./image360.png');
+   left: 574px;
+   top: 300px;
+}
+

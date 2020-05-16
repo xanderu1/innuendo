@@ -1,0 +1,122 @@
+<html>
+    <head>
+        <meta charset="utf-8"/>
+        <meta
+           name="viewport"
+           content="width=device-width, initial-scale=0.33, user-scalable=no"
+        />
+        <title>Innuendo 2019</title>
+        <script src="./jquery-1.10.1.min.js"></script>
+        <script src="./socket.io.js"></script>
+        <script type="text/javascript" src="./script.js"></script>
+        <link rel="stylesheet" type="text/css" href="./style.css">
+    </head>
+
+    <body>
+        <div id="HeaderPage1">Innuendo</div>
+
+        <div class="PanelPage" id="PanelPage0">
+           <input class="HomeBtn" type="button" value="" id="HomeLink0" />
+        </div>
+
+        <div class="PanelPage" id="PanelPage1">
+           <input class="SelectBtn" type="button" value="" id="Select1" />
+           <input class="SelectBtn" type="button" value="" id="Select2" />
+           <input class="SelectBtn" type="button" value="" id="Select3" />
+           <input class="SelectBtn" type="button" value="" id="Select4" />
+           <input class="SelectBtn" type="button" value="" id="HomeLink1" />
+        </div>
+
+        <div class="PanelPage" id="PanelPage2">
+           <input class="FileBtn" type="button" value="?" id="File0" />
+           <input class="FileBtn" type="button" value="?" id="File1" />
+           <input class="FileBtn" type="button" value="?" id="File2" />
+           <input class="FileBtn" type="button" value="?" id="File3" />
+           <input class="FileBtn" type="button" value="?" id="File4" />
+           <input class="FileBtn" type="button" value="?" id="File5" />
+           <input class="FileBtn" type="button" value="?" id="File6" />
+           <input class="FileBtn" type="button" value="?" id="File7" />
+           <input class="FileBtn" type="button" value="?" id="File8" />
+           <input class="FileBtn" type="button" value="?" id="File9" />
+           <input id="AudioFile" type="button" value="No file selected" />
+        </div>
+
+        <div class="PanelPage" id="PanelPage3">
+           <div id="radiochannel">no channel selected</div>
+        </div>
+
+        <div class="PanelPage" id="PanelPage4">
+        </div>
+
+        <div class="PanelPage" id="PanelPage5">
+        </div>
+
+        <div class="FooterPage" id="FooterPage0">
+           <div class="AudioCtrlHeader" id="FrontDoorFB">?</div>
+           <input class="RelayBtn" type="button" value="" id="FrontDoorUp" />
+           <input class="RelayBtn" type="button" value="" id="FrontDoorDown" />
+           <div class="AudioCtrlHeader" id="PreampPowerFB">?</div>
+           <input class="RelayBtn" type="button" value="" id="PreampPowerUp" />
+           <input class="RelayBtn" type="button" value="" id="PreampPowerDown" />
+           <div class="AudioCtrlHeader" id="LineOutputFB">?</div>
+           <input class="RelayBtn" type="button" value="" id="LineOutputUp" />
+           <input class="RelayBtn" type="button" value="" id="LineOutputDown" />
+        </div>
+
+        <div class="VolumePage" id="VolumePage0">
+           <div class="AudioCtrlHeader" id="AudioCtrlHeaderVolume">Volume</div>
+           <div class="AudioCtrlFeedBack" id="VolumeFB">?</div>
+           <input class="AudioCtrlBtn" type="button" value="" id="VolumeUp" />
+           <input class="AudioCtrlBtn" type="button" value="" id="VolumeDown" />
+        </div>
+
+        <div class="FooterPage" id="FooterPage1">
+           <div class="AudioCtrlHeader" id="AudioCtrlHeaderBass">Bass</div>
+           <div class="AudioCtrlFeedBack" id="BassFB">?</div>
+           <input class="AudioCtrlBtn" type="button" value="" id="BassUp" />
+           <input class="AudioCtrlBtn" type="button" value="" id="BassDown" />
+           <div class="AudioCtrlHeader" id="AudioCtrlHeaderMiddle">Middle</div>
+           <div class="AudioCtrlFeedBack" id="MiddleFB">?</div>
+           <input class="AudioCtrlBtn" type="button" value="" id="MiddleUp" />
+           <input class="AudioCtrlBtn" type="button" value="" id="MiddleDown" />
+           <div class="AudioCtrlHeader" id="AudioCtrlHeaderTrebble">Trebble</div>
+           <div class="AudioCtrlFeedBack" id="TrebbleFB">?</div>
+           <input class="AudioCtrlBtn" type="button" value="" id="TrebbleUp" />
+           <input class="AudioCtrlBtn" type="button" value="" id="TrebbleDown" />
+        </div>
+
+        <div class="FooterPage" id="FooterPage2">
+           <input class="AudioCtrlBtn" type="button" value="" id="play2" />
+           <input class="AudioCtrlBtn" type="button" value="" id="previous2" />
+           <input class="AudioCtrlBtn" type="button" value="" id="next2" />
+           <input class="AudioCtrlBtn" type="button" value="" id="stop2" />
+           <input class="HomeBtn" type="button" value="" id="HomeLink2" />
+           <input class="AudioCtrlBtn" type="button" value="" id="DirectoryUp2" />
+        </div>
+
+        <div class="FooterPage" id="FooterPage3">
+           <input class="AudioCtrlBtn" type="button" value="" id="play3" />
+           <input class="AudioCtrlBtn" type="button" value="" id="previous3" />
+           <input class="AudioCtrlBtn" type="button" value="" id="next3" />
+           <input class="AudioCtrlBtn" type="button" value="" id="stop3" />
+           <input class="HomeBtn" type="button" value="" id="HomeLink3" />
+        </div>
+
+        <div class="FooterPage" id="FooterPage4">
+           <input class="AudioCtrlBtn" type="button" value="" id="play4" />
+           <input class="HomeBtn" type="button" value="" id="HomeLink4" />
+        </div>
+
+        <div class="FooterPage" id="FooterPage5">
+           <input class="AudioCtrlBtn" type="button" value="" id="play5" />
+           <input class="HomeBtn" type="button" value="" id="HomeLink5" />
+        </div>
+
+        <p>
+           <input type="button" value="Terminate Audio Thread" id="TerminateAudio" />
+           <input type="button" value="Terminate Power Thread" id="TerminatePower" />
+        </p>
+
+    </body>
+</html>
+

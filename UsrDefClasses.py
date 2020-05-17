@@ -2,6 +2,7 @@ import json
 from threading import Lock
 import constants as c
 import os
+from tinytag import TinyTag
 
 # ------------------------------------------------
 # NAS Class
@@ -51,6 +52,7 @@ class Nas:
                   "is not allowed, set path to: ", c.NASSERVERSPATH)
             path = c.NASSERVERSPATH
 
+        # scan directory for audio files and directories
         with os.scandir(path) as items:
             for item in items:
                 if not item.name.startswith('.'):
@@ -65,6 +67,17 @@ class Nas:
                         dir_item[c.JSONKEYLINK] = item.path
                         tmp.append(dir_item)
         items.close()
+
+        # retrieve title from meta data
+        for i in range(len(tmp)):
+            if tmp[i]["directory"] == "False":
+                try:
+                    tag = TinyTag.get(tmp[i]["link"])
+                    if tag is not None:
+                        if tag.title != "":
+                            tmp[i]["title"] = tag.title
+                except:
+                    tag = ""
 
         # sort on alphabetic order (CAPS independent) + folders
         mod = True

@@ -4,12 +4,18 @@ $(document).ready(function() {
    var radioLink = "./hammer.wma";
    var maxRadioChannel = 1;
    var maxNrOfFiles = 0;
+   var mediaIndexHistory = [];
    var mediaIndex = 0;
    var mediaUrl = "/home/pi/innuendo/nasservers/Music/";
    var mediaFileUrl = "./hammer.wma";
    var mediaLinks = new Array(10);
    for(index = 0; index < 10; index++)
       mediaLinks[index] = new Array(3);
+
+
+// *********************************************************************************
+// global functions 
+// *********************************************************************************
 
    function showMenu(menu) {
       // Show menu tab
@@ -182,6 +188,11 @@ $(document).ready(function() {
          })
    }
 
+
+// *********************************************************************************
+// Event handlers
+// *********************************************************************************
+
    //Receiving preampfeedback data from webserver
    socket.on('preampfeedback', function(message) {
       $('#VolumeFB').text(message.VolumeFB);
@@ -262,7 +273,11 @@ $(document).ready(function() {
       socket.emit('preampcontrol', {"SelectCtrl": 4});
    });
 
-   // main page
+
+// *********************************************************************************
+// main page
+// *********************************************************************************
+
    $('#Select1').click(function () {
       getMediaFiles( mediaIndex, mediaUrl );
       showMenu(2);
@@ -297,7 +312,11 @@ $(document).ready(function() {
       showMenu(0);
    });
 
-   //media player page
+
+// *********************************************************************************
+// media player page
+// *********************************************************************************
+
    $('#play2').click(function () {
       socket.emit('preampcontrol', {"SelectCtrl": 1});
       socket.emit('mediaplayerctrl', { "cmd": "play", "url": mediaFileUrl});
@@ -320,7 +339,12 @@ $(document).ready(function() {
    });
 
    $("#DirectoryUp2").click(function() {
-      mediaIndex = 0;
+      if(mediaIndexHistory.length > 0) {
+         mediaIndex = mediaIndexHistory[mediaIndexHistory.length - 1];
+	     mediaIndexHistory.pop();
+	  } else {
+		 mediaIndex = 0; 
+	  }
       mediaUrl = DirectoryUp( mediaUrl );
       getMediaFiles( mediaIndex, mediaUrl );
    });
@@ -335,13 +359,17 @@ $(document).ready(function() {
          document.getElementById("AudioFile").value = mediaLinks[id][0];
          mediaFileUrl = mediaLinks[id][2];
       } else {
+		 mediaIndexHistory.push(mediaIndex); 
          mediaIndex = 0;
          mediaUrl = mediaLinks[id][2];
          getMediaFiles( mediaIndex, mediaUrl )
       }
    });
 
-   //inet radio page
+// *********************************************************************************
+// inet radio page
+// *********************************************************************************
+
    $('#play3').click(function () {
       socket.emit('preampcontrol', {"SelectCtrl": 2});
       socket.emit('mediaplayerctrl', { "cmd": "play", "url": radioLink});
@@ -366,5 +394,12 @@ $(document).ready(function() {
    $("#stop3").click(function() {
       socket.emit('mediaplayerctrl', { "cmd": "stop" });
    });
+
+   
+// *********************************************************************************
+// program
+// *********************************************************************************
+
+   socket.emit('update', {});
 
 });

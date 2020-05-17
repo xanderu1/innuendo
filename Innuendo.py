@@ -3,6 +3,7 @@ from aiohttp import web
 from socketio import AsyncServer
 import json
 import os
+import time
 from threading import Thread
 
 import constants as c
@@ -91,6 +92,17 @@ async def power_control_message(sid, message):
     global PowerCtrl
     print(__name__, " -> Client Power Message: ", sid, ": ", message)
     PowerCtrl.update_power_controls(sid, message)
+    await sio.emit(c.SOCKETIOPOWERFB, PowerCtrl.return_power_feedback())
+
+
+@sio.on(c.SOCKETIOUPDATE)
+async def pdate_control_message(sid, message):
+    # on receiving an update signals
+    global AudioCtrl
+    global PowerCtrl
+    print(__name__, " -> Client update message: ", sid, ": ", message)
+    # PowerCtrl.update_power_controls(sid, message)
+    await sio.emit(c.SOCKETIOPREAMPFB, AudioCtrl.return_preamp_feedback())
     await sio.emit(c.SOCKETIOPOWERFB, PowerCtrl.return_power_feedback())
 
 
